@@ -22,6 +22,9 @@ jobs:
       # Secrets are not allowed in `if:` expressions, so map them to env first.
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Optional: use a PAT for pushing to main if repository rules block GITHUB_TOKEN.
+      # Create a fine-grained PAT with Contents: Read and write, scoped to this repo.
+      REPO_PUSH_PAT: ${{ secrets.REPO_PUSH_PAT }}
 
     steps:
       - uses: actions/checkout@v4
@@ -210,7 +213,8 @@ jobs:
 
           # claude-code-action may rewrite the origin URL to use its temporary app token,
           # and then revoke it at the end of the step. Reset origin to the workflow token.
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          PUSH_TOKEN="${REPO_PUSH_PAT:-${GH_TOKEN}}"
+          git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
           # actions/checkout typically leaves us in detached HEAD; ensure a local main branch.
           git checkout -B main
