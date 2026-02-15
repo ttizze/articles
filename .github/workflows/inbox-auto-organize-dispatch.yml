@@ -1,0 +1,81 @@
+name: Inbox Auto Organize (Dispatch on Push)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "inbox/*.md"
+      - "inbox/*/index.md"
+
+concurrency:
+  group: inbox-auto-organize-dispatch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    # Avoid infinite loops from bot commits (unlikely on main, but keep it explicit).
+    if: ${{ !endsWith(github.actor, '[bot]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute Inbox Targets (Added/Modified Only)
+        id: targets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          # Only dispatch for added/modified files. Merges from the organizer PR will delete
+          # inbox/*.md, and we want to ignore deletions to avoid re-dispatching.
+          FILES="$(git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER" || true)"
+
+          TARGETS="$(
+            printf '%s\n' "${FILES}" \
+              | sed '/^$/d' \
+              | awk '
+                  $0 ~ /^inbox\/[^\/]+\.md$/ { print; next }
+                  $0 ~ /^inbox\/[^\/]+\/index\.md$/ { print; next }
+                ' \
+              | sort -u
+          )"
+
+          COUNT="$(printf '%s\n' "${TARGETS}" | sed '/^$/d' | wc -l | tr -d ' ')"
+
+          {
+            echo "count=${COUNT}"
+            echo "targets<<EOF"
+            printf '%s\n' "${TARGETS}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Skip If No Targets
+        if: ${{ steps.targets.outputs.count == '0' }}
+        shell: bash
+        run: echo "No added/modified inbox targets in this push."
+
+      - name: Dispatch Inbox Auto Organize (workflow_dispatch)
+        if: ${{ steps.targets.outputs.count != '0' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGETS: ${{ steps.targets.outputs.targets }}
+        run: |
+          set -euo pipefail
+
+          echo "Dispatching Inbox Auto Organize with targets:"
+          printf '%s\n' "${TARGETS}"
+
+          gh workflow run inbox-auto-organize.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref "main" \
+            -f "targets=${TARGETS}"
+

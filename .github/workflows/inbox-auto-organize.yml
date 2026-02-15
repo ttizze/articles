@@ -1,16 +1,12 @@
 name: Inbox Auto Organize
 
 on:
-  push:
-    branches:
-      - main
-    # Process only newly saved items that are placed directly under inbox/.
-    # Once organized into inbox/<category>/..., subsequent commits won't re-trigger
-    # except for the bot's organizing commit (which is skipped via job-level if).
-    paths:
-      - "inbox/*.md"
-      - "inbox/*/index.md"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: "Newline-separated inbox targets to process (inbox/<name>.md or inbox/<dir>/index.md). Leave empty to process all top-level inbox entries."
+        required: false
+        type: string
 
 concurrency:
   group: inbox-auto-organize-${{ github.ref }}
@@ -38,15 +34,15 @@ jobs:
       - name: Compute Inbox Targets
         id: targets
         shell: bash
+        env:
+          TARGETS_INPUT: ${{ github.event.inputs.targets }}
         run: |
           set -euo pipefail
 
-          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
-            BEFORE="${{ github.event.before }}"
-            AFTER="${{ github.sha }}"
-            FILES="$(git diff --name-only "$BEFORE" "$AFTER" || true)"
+          if [ -n "${TARGETS_INPUT:-}" ]; then
+            FILES="${TARGETS_INPUT}"
           else
-            # workflow_dispatch: process all top-level inbox entries (same patterns as push trigger)
+            # workflow_dispatch (no explicit targets): process all top-level inbox entries.
             FILES="$(
               (ls -1 inbox/*.md 2>/dev/null || true)
               (find inbox -maxdepth 2 -type f -path 'inbox/*/index.md' 2>/dev/null || true)
