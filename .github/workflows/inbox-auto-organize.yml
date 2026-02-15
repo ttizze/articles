@@ -138,7 +138,7 @@ jobs:
                - If there are no targets, do nothing.
 
             After completion:
-            - There should be no remaining inbox/*.md or inbox/*/index.md entries at the top level (except category folders).
+            - Each target path must no longer exist at its original location, and the normalized destination must exist under inbox/<category>/... as specified above.
 
       - name: Organize Inbox + Translate (Claude Code via API Key)
         if: ${{ steps.targets.outputs.count != '0' && env.CLAUDE_CODE_OAUTH_TOKEN == '' && env.ANTHROPIC_API_KEY != '' }}
@@ -197,7 +197,88 @@ jobs:
                - If there are no targets, do nothing.
 
             After completion:
-            - There should be no remaining inbox/*.md or inbox/*/index.md entries at the top level (except category folders).
+            - Each target path must no longer exist at its original location, and the normalized destination must exist under inbox/<category>/... as specified above.
+
+      - name: Validate Organized Structure
+        if: ${{ steps.targets.outputs.count != '0' }}
+        shell: bash
+        env:
+          TARGETS: ${{ steps.targets.outputs.targets }}
+        run: |
+          set -euo pipefail
+
+          CATS=(programming design marketing business buddhism reading other)
+
+          for c in "${CATS[@]}"; do
+            if [ -f "inbox/${c}/index.md" ] || [ -f "inbox/${c}/index.ja.md" ]; then
+              echo "Invalid output: category index file must not exist: inbox/${c}/index.md or inbox/${c}/index.ja.md"
+              exit 1
+            fi
+          done
+
+          while IFS= read -r t; do
+            [ -z "$t" ] && continue
+
+            if [[ "$t" =~ ^inbox/[^/]+\\.md$ ]]; then
+              base="$(basename "$t" .md)"
+
+              if [ -e "$t" ]; then
+                echo "Invalid output: target file still exists: $t"
+                exit 1
+              fi
+
+              found=""
+              for c in "${CATS[@]}"; do
+                candidate="inbox/${c}/${base}/index.md"
+                if [ -f "$candidate" ]; then
+                  if [ -n "$found" ]; then
+                    echo "Invalid output: multiple destinations for $t:"
+                    echo "- $found"
+                    echo "- $candidate"
+                    exit 1
+                  fi
+                  found="$candidate"
+                fi
+              done
+
+              if [ -z "$found" ]; then
+                echo "Invalid output: destination not found for $t (expected inbox/<category>/${base}/index.md)"
+                exit 1
+              fi
+
+            elif [[ "$t" =~ ^inbox/[^/]+/index\\.md$ ]]; then
+              d="$(dirname "$t")"
+              d="${d#inbox/}"
+
+              if [ -d "inbox/${d}" ]; then
+                echo "Invalid output: original directory still exists: inbox/${d}"
+                exit 1
+              fi
+
+              found=""
+              for c in "${CATS[@]}"; do
+                candidate="inbox/${c}/${d}/index.md"
+                if [ -f "$candidate" ]; then
+                  if [ -n "$found" ]; then
+                    echo "Invalid output: multiple destinations for $t:"
+                    echo "- $found"
+                    echo "- $candidate"
+                    exit 1
+                  fi
+                  found="$candidate"
+                fi
+              done
+
+              if [ -z "$found" ]; then
+                echo "Invalid output: destination not found for $t (expected inbox/<category>/${d}/index.md)"
+                exit 1
+              fi
+
+            else
+              echo "Invalid target shape: $t"
+              exit 1
+            fi
+          done <<< "${TARGETS}"
 
       - name: Commit Changes
         if: ${{ steps.targets.outputs.count != '0' }}
