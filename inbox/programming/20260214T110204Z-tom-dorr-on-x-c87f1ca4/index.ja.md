@@ -1,0 +1,15 @@
+---
+saved_at: "2026-02-14T11:02:04.050Z"
+source_url: "https://x.com/tom_doerr/status/2021738613449351627?s=12"
+source_app: "ios-share-extension"
+page_title: "Tom Dörr on X"
+note: ""
+content_type: "application/x-oembed+json"
+extractor: "x-oembed"
+---
+
+# Tom Dörr on X
+
+iOSアプリケーションをデバッグするためのツールキット https://github.com/DebugSwift/DebugSwift   pic.twitter.com/HJzCPrgwo4
+
+— Tom Dörr (@tom_doerr)  2026年2月12日
