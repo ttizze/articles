@@ -217,6 +217,8 @@ jobs:
           done
 
           while IFS= read -r t; do
+            # GitHub sometimes injects CRLF into multiline inputs/outputs.
+            t="${t//$'\r'/}"
             [ -z "$t" ] && continue
 
             if [[ "$t" =~ ^inbox/[^/]+\\.md$ ]]; then
