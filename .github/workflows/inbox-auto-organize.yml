@@ -219,6 +219,8 @@ jobs:
           while IFS= read -r t; do
             # GitHub sometimes injects CRLF into multiline inputs/outputs.
             t="${t//$'\r'/}"
+            # Be tolerant of accidental whitespace around lines.
+            t="$(printf '%s' "$t" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
             [ -z "$t" ] && continue
 
             if [[ "$t" =~ ^inbox/[^/]+\\.md$ ]]; then
