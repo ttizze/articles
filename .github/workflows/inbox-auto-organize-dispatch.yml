@@ -15,7 +15,7 @@ concurrency:
 jobs:
   dispatch:
     # Avoid infinite loops from bot commits (unlikely on main, but keep it explicit).
-    if: ${{ !endsWith(github.actor, '[bot]') }}
+    if: ${{ github.actor != 'github-actions' && !endsWith(github.actor, '[bot]') }}
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -78,4 +78,3 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --ref "main" \
             -f "targets=${TARGETS}"
-

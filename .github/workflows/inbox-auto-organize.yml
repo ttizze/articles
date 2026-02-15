@@ -213,36 +213,9 @@ jobs:
           # and then revoke it at the end of the step. Reset origin to the workflow token.
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
-          BRANCH="inbox/auto-organize-${GITHUB_RUN_ID}"
-          git switch -c "$BRANCH"
+          # actions/checkout typically leaves us in detached HEAD; ensure a local main branch.
+          git checkout -B main
 
           git add -A
           git commit -m "chore: organize inbox"
-          git push origin "$BRANCH"
-
-          # Some repos/orgs disable "Allow GitHub Actions to create and approve pull requests".
-          # Even if PR creation is blocked, pushing the branch is still useful; surface the manual URL.
-          PR_URL="$(
-            gh pr create \
-              --repo "$GITHUB_REPOSITORY" \
-              --base "main" \
-              --head "$BRANCH" \
-              --title "chore: organize inbox" \
-              --body "Automated inbox classification and index.ja.md full translations." \
-              --json url -q .url 2>/tmp/pr_create.err || true
-          )"
-
-          if [ -n "${PR_URL}" ]; then
-            echo "Created PR: ${PR_URL}"
-            exit 0
-          fi
-
-          echo "PR was not created automatically."
-          echo "Create it manually here:"
-          echo "https://github.com/${GITHUB_REPOSITORY}/pull/new/${BRANCH}"
-
-          if [ -s /tmp/pr_create.err ]; then
-            echo ""
-            echo "gh pr create error:"
-            sed -n '1,40p' /tmp/pr_create.err
-          fi
+          git push origin main
