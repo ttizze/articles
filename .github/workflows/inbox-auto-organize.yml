@@ -168,6 +168,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # claude-code-action may rewrite the origin URL to use its temporary app token,
+          # and then revoke it at the end of the step. Reset origin to the workflow token.
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
           BRANCH="inbox/auto-organize-${GITHUB_RUN_ID}"
           git switch -c "$BRANCH"
 
