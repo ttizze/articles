@@ -9,7 +9,9 @@ extractor: "x-oembed"
 ---
 
 # Eli Mernit on X
+> Eli Mernit on X
 
-https://x.com/i/article/2021308996020211712
+https://x.com/i/article/2021308996020211712 
 
-— Eli Mernit (@mernit)  2026年2月10日
+— Eli Mernit (@mernit)  February 10, 2026
+> — Eli Mernit (@mernit)  2026年2月10日

@@ -9,9 +9,13 @@ extractor: "x-oembed"
 ---
 
 # Qasim on X
+> Qasim on X
 
-これに全力で取り組むためにMacBookを購入しました。
+I bought a MacBook to go all in on this.
+> これに全力で取り組むためにMacBookを購入しました。
 
-OpenClawは本当にクレイジーです。  https://twitter.com/oliverhenry/status/2022011925903667547   pic.twitter.com/7Iahp9rE69
+OpenClaw is genuinely crazy.  https://twitter.com/oliverhenry/status/2022011925903667547   pic.twitter.com/7Iahp9rE69 
+> OpenClawは本当にクレイジーです。  https://twitter.com/oliverhenry/status/2022011925903667547   pic.twitter.com/7Iahp9rE69
 
-— Qasim (@qasimbizs)  2026年2月13日
+— Qasim (@qasimbizs)  February 13, 2026
+> — Qasim (@qasimbizs)  2026年2月13日

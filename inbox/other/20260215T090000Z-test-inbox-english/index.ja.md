@@ -8,12 +8,18 @@ content_type: "text/plain"
 extractor: "test"
 ---
 
-# テストインボックス英語
+# Test Inbox English
+> テストインボックス英語
 
-これはインボックスに保存されたテスト記事です。
-英語で書かれているため、ワークフローは `index.ja.md` を生成する必要があります。
+This is a test article saved to inbox.
+It is written in English, so the workflow should generate `index.ja.md`.
+> これはインボックスに保存されたテスト記事です。
+> 英語で書かれているため、ワークフローは `index.ja.md` を生成する必要があります。
 
-## セクション
+## Section
+> セクション
 
-- 一つ
-- 二つ
+- One
+- Two
+> - 一つ
+> - 二つ

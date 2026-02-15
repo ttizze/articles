@@ -9,7 +9,10 @@ extractor: "x-oembed"
 ---
 
 # Kath Korevec on X
+> Kath Korevec on X
 
-16セグメントディスプレイ用のジェネレーティブアートアニメーションを研究、コーディング、実行するためのエージェントを構築しました。コードとハードウェア設計ファイルを近日中にオープンソースにします。  pic.twitter.com/nFwXKqPQzH
+I built an agent for researching, coding, and running generative art animations for 16-segment displays. Will open source code and hardware design files soon.  pic.twitter.com/nFwXKqPQzH 
+> 16セグメントディスプレイ用のジェネレーティブアートアニメーションを研究、コーディング、実行するためのエージェントを構築しました。コードとハードウェア設計ファイルを近日中にオープンソースにします。  pic.twitter.com/nFwXKqPQzH
 
-— Kath Korevec (@simpsoka)  2026年2月14日
+— Kath Korevec (@simpsoka)  February 14, 2026
+> — Kath Korevec (@simpsoka)  2026年2月14日

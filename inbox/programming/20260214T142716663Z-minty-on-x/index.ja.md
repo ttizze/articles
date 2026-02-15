@@ -9,7 +9,10 @@ extractor: "x-oembed"
 ---
 
 # Minty on X
+> Minty on X
 
-毎日使用している最高のClaude Codeプラグイン  pic.twitter.com/VUYJ19A4yW
+Best Claude Code plugins I use daily  pic.twitter.com/VUYJ19A4yW 
+> 毎日使用している最高のClaude Codeプラグイン  pic.twitter.com/VUYJ19A4yW
 
-— Minty (@DeFiMinty)  2026年2月11日
+— Minty (@DeFiMinty)  February 11, 2026
+> — Minty (@DeFiMinty)  2026年2月11日
