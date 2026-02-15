@@ -121,6 +121,8 @@ jobs:
                  - Move the file to inbox/<category>/<name>/index.md
                - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
                  - Move the whole directory to inbox/<category>/<dir>/
+                 - Example: inbox/foo/index.md -> inbox/programming/foo/index.md (directory name must be preserved)
+               - Do NOT create or modify any category index file like inbox/<category>/index.md.
             3) Translation:
                - For each processed entry directory containing index.md:
                  - If index.ja.md already exists, do nothing.
@@ -178,6 +180,8 @@ jobs:
                  - Move the file to inbox/<category>/<name>/index.md
                - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
                  - Move the whole directory to inbox/<category>/<dir>/
+                 - Example: inbox/foo/index.md -> inbox/programming/foo/index.md (directory name must be preserved)
+               - Do NOT create or modify any category index file like inbox/<category>/index.md.
             3) Translation:
                - For each processed entry directory containing index.md:
                  - If index.ja.md already exists, do nothing.
