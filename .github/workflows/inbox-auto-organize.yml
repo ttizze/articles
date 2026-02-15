@@ -23,6 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      # Secrets are not allowed in `if:` expressions, so map them to env first.
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +34,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fail If No Claude Credentials
-        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY == '' }}
+        if: ${{ env.CLAUDE_CODE_OAUTH_TOKEN == '' && env.ANTHROPIC_API_KEY == '' }}
         shell: bash
         run: |
           echo "Missing credentials."
@@ -38,10 +42,10 @@ jobs:
           exit 1
 
       - name: Organize Inbox + Translate (Claude Code via OAuth)
-        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        if: ${{ env.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         uses: anthropics/claude-code-action@v1
         with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_code_oauth_token: ${{ env.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --max-turns 20
             --allowedTools "Edit,Read,Write,Bash"
@@ -93,10 +97,10 @@ jobs:
             - There should be no remaining inbox/*.md or inbox/*/index.md entries at the top level (except category folders).
 
       - name: Organize Inbox + Translate (Claude Code via API Key)
-        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY != '' }}
+        if: ${{ env.CLAUDE_CODE_OAUTH_TOKEN == '' && env.ANTHROPIC_API_KEY != '' }}
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
           claude_args: |
             --max-turns 20
             --allowedTools "Edit,Read,Write,Bash"
