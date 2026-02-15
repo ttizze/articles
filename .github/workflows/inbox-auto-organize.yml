@@ -220,9 +220,29 @@ jobs:
           git commit -m "chore: organize inbox"
           git push origin "$BRANCH"
 
-          gh pr create \
-            --repo "$GITHUB_REPOSITORY" \
-            --base "main" \
-            --head "$BRANCH" \
-            --title "chore: organize inbox" \
-            --body "Automated inbox classification and index.ja.md full translations."
+          # Some repos/orgs disable "Allow GitHub Actions to create and approve pull requests".
+          # Even if PR creation is blocked, pushing the branch is still useful; surface the manual URL.
+          PR_URL="$(
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base "main" \
+              --head "$BRANCH" \
+              --title "chore: organize inbox" \
+              --body "Automated inbox classification and index.ja.md full translations." \
+              --json url -q .url 2>/tmp/pr_create.err || true
+          )"
+
+          if [ -n "${PR_URL}" ]; then
+            echo "Created PR: ${PR_URL}"
+            exit 0
+          fi
+
+          echo "PR was not created automatically."
+          echo "Create it manually here:"
+          echo "https://github.com/${GITHUB_REPOSITORY}/pull/new/${BRANCH}"
+
+          if [ -s /tmp/pr_create.err ]; then
+            echo ""
+            echo "gh pr create error:"
+            sed -n '1,40p' /tmp/pr_create.err
+          fi
