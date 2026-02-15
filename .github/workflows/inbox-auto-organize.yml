@@ -1,0 +1,165 @@
+name: Inbox Auto Organize
+
+on:
+  push:
+    branches:
+      - main
+    # Process only newly saved items that are placed directly under inbox/.
+    # Once organized into inbox/<category>/..., subsequent commits won't re-trigger
+    # except for the bot's organizing commit (which is skipped via job-level if).
+    paths:
+      - "inbox/*.md"
+      - "inbox/*/index.md"
+  workflow_dispatch: {}
+
+concurrency:
+  group: inbox-auto-organize-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  organize:
+    # Avoid infinite loops from the bot's organizing commit.
+    if: ${{ !endsWith(github.actor, '[bot]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail If No Claude Credentials
+        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY == '' }}
+        shell: bash
+        run: |
+          echo "Missing credentials."
+          echo "Set either secrets.CLAUDE_CODE_OAUTH_TOKEN (Claude Code subscription OAuth) or secrets.ANTHROPIC_API_KEY (direct API)."
+          exit 1
+
+      - name: Organize Inbox + Translate (Claude Code via OAuth)
+        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 20
+            --allowedTools "Edit,Read,Write,Bash"
+          prompt: |
+            You are an automation agent for this repository.
+            Do NOT run git commands (git add/commit/push). A later workflow step will commit/push.
+
+            Goal:
+            - When new articles are saved under inbox/, automatically classify and move them into inbox/<category>/...
+            - If the content is NOT primarily Japanese, create a full Japanese translation as index.ja.md.
+
+            Target inputs (ONLY these, and only when directly under inbox/):
+            - Files: inbox/*.md
+            - Directories: inbox/*/index.md
+            Do not touch anything already under inbox/<category>/...
+
+            Categories (directory names):
+            - programming
+            - design
+            - marketing
+            - business
+            - buddhism
+            - reading
+            - other
+
+            Rules:
+            1) For each target entry, choose exactly one category based on the content.
+            2) Move/normalize structure:
+               - If the entry is a file inbox/<name>.md:
+                 - Create directory inbox/<category>/<name>/
+                 - Move the file to inbox/<category>/<name>/index.md
+               - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
+                 - Move the whole directory to inbox/<category>/<dir>/
+            3) Translation:
+               - For each processed entry directory containing index.md:
+                 - If index.ja.md already exists, do nothing.
+                 - If index.md is primarily Japanese, do nothing.
+                 - Otherwise, create index.ja.md as a full Japanese translation of index.md.
+               - index.ja.md must:
+                 - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+                 - Preserve links/URLs/code blocks as much as possible.
+                 - Keep the same heading structure.
+            4) Be conservative:
+               - Do not summarize. Do not rewrite for style. Translate only.
+               - Only move files/directories and create missing index.ja.md files.
+               - If there are no targets, do nothing.
+
+            After completion:
+            - There should be no remaining inbox/*.md or inbox/*/index.md entries at the top level (except category folders).
+
+      - name: Organize Inbox + Translate (Claude Code via API Key)
+        if: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY != '' }}
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --max-turns 20
+            --allowedTools "Edit,Read,Write,Bash"
+          prompt: |
+            You are an automation agent for this repository.
+            Do NOT run git commands (git add/commit/push). A later workflow step will commit/push.
+
+            Goal:
+            - When new articles are saved under inbox/, automatically classify and move them into inbox/<category>/...
+            - If the content is NOT primarily Japanese, create a full Japanese translation as index.ja.md.
+
+            Target inputs (ONLY these, and only when directly under inbox/):
+            - Files: inbox/*.md
+            - Directories: inbox/*/index.md
+            Do not touch anything already under inbox/<category>/...
+
+            Categories (directory names):
+            - programming
+            - design
+            - marketing
+            - business
+            - buddhism
+            - reading
+            - other
+
+            Rules:
+            1) For each target entry, choose exactly one category based on the content.
+            2) Move/normalize structure:
+               - If the entry is a file inbox/<name>.md:
+                 - Create directory inbox/<category>/<name>/
+                 - Move the file to inbox/<category>/<name>/index.md
+               - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
+                 - Move the whole directory to inbox/<category>/<dir>/
+            3) Translation:
+               - For each processed entry directory containing index.md:
+                 - If index.ja.md already exists, do nothing.
+                 - If index.md is primarily Japanese, do nothing.
+                 - Otherwise, create index.ja.md as a full Japanese translation of index.md.
+               - index.ja.md must:
+                 - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+                 - Preserve links/URLs/code blocks as much as possible.
+                 - Keep the same heading structure.
+            4) Be conservative:
+               - Do not summarize. Do not rewrite for style. Translate only.
+               - Only move files/directories and create missing index.ja.md files.
+               - If there are no targets, do nothing.
+
+            After completion:
+            - There should be no remaining inbox/*.md or inbox/*/index.md entries at the top level (except category folders).
+
+      - name: Commit Changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          git commit -m "chore: organize inbox"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
