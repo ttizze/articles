@@ -223,7 +223,7 @@ jobs:
             t="$(printf '%s' "$t" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
             [ -z "$t" ] && continue
 
-            if [[ "$t" =~ ^inbox/[^/]+\\.md$ ]]; then
+            if [[ "$t" =~ ^inbox/[^/]+\.md$ ]]; then
               base="$(basename "$t" .md)"
 
               if [ -e "$t" ]; then
@@ -250,7 +250,7 @@ jobs:
                 exit 1
               fi
 
-            elif [[ "$t" =~ ^inbox/[^/]+/index\\.md$ ]]; then
+            elif [[ "$t" =~ ^inbox/[^/]+/index\.md$ ]]; then
               d="$(dirname "$t")"
               d="${d#inbox/}"
 
