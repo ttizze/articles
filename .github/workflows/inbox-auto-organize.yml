@@ -14,8 +14,6 @@ concurrency:
 
 jobs:
   organize:
-    # Avoid infinite loops from the bot's organizing commit.
-    if: ${{ !endsWith(github.actor, '[bot]') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
