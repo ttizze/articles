@@ -8,11 +8,12 @@ content_type: "application/x-oembed+json"
 extractor: "x-oembed"
 ---
 
-# Tom Dörr on X
-> Tom Dörr on X
+> # Tom Dörr on X
+Tom Dörr on X
 
-Toolkit for debugging iOS applications https://github.com/DebugSwift/DebugSwift   pic.twitter.com/HJzCPrgwo4 
-> iOSアプリケーションをデバッグするためのツールキット https://github.com/DebugSwift/DebugSwift   pic.twitter.com/HJzCPrgwo4
+> Toolkit for debugging iOS applications https://github.com/DebugSwift/DebugSwift   pic.twitter.com/HJzCPrgwo4 
+iOSアプリケーションをデバッグするためのツールキット https://github.com/DebugSwift/DebugSwift   pic.twitter.com/HJzCPrgwo4
 
-— Tom Dörr (@tom_doerr)  February 12, 2026
-> — Tom Dörr (@tom_doerr)  2026年2月12日
+> — Tom Dörr (@tom_doerr)  February 12, 2026
+— Tom Dörr (@tom_doerr)  2026年2月12日
+

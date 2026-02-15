@@ -8,22 +8,23 @@ content_type: "application/x-oembed+json"
 extractor: "x-oembed"
 ---
 
-# J on X
-> J on X
+> # J on X
+J on X
 
-ChatGPTの「より良いUI」を提供するだけで月2000万円近く個人で稼いでいるTypingMindの戦略を徹底分析。↓
 > ChatGPTの「より良いUI」を提供するだけで月2000万円近く個人で稼いでいるTypingMindの戦略を徹底分析。↓
+ChatGPTの「より良いUI」を提供するだけで月2000万円近く個人で稼いでいるTypingMindの戦略を徹底分析。↓
 
-結論、天才的。
 > 結論、天才的。
+結論、天才的。
 
-✅️概要
-ポイントは「APIキーはユーザー持ち込み」「データはローカル保存」という設計。
 > ✅️概要
 > ポイントは「APIキーはユーザー持ち込み」「データはローカル保存」という設計。
+✅️概要
+ポイントは「APIキーはユーザー持ち込み」「データはローカル保存」という設計。
 
-つまりサーバー代ゼロ。LLM代もゼロ。…  https://twitter.com/tdinh_me/status/2011289471241826767 
-> つまりサーバー代ゼロ。LLM代もゼロ。…  https://twitter.com/tdinh_me/status/2011289471241826767
+> つまりサーバー代ゼロ。LLM代もゼロ。…  https://twitter.com/tdinh_me/status/2011289471241826767 
+つまりサーバー代ゼロ。LLM代もゼロ。…  https://twitter.com/tdinh_me/status/2011289471241826767
 
-— J (@xjuntaro)  February 5, 2026
-> — J (@xjuntaro)  2026年2月5日
+> — J (@xjuntaro)  February 5, 2026
+— J (@xjuntaro)  2026年2月5日
+

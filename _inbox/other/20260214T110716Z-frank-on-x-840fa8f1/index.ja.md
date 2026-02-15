@@ -8,11 +8,12 @@ content_type: "application/x-oembed+json"
 extractor: "x-oembed"
 ---
 
-# Frank on X
-> Frank on X
+> # Frank on X
+Frank on X
 
-My favorite thing in the world to play with now. You can accurately research anything on X now.  https://twitter.com/frankdegods/status/2020363804014493920   pic.twitter.com/e6Aiz38090 
-> 今、世界で遊ぶのが一番好きなもの。Xで何でも正確にリサーチできるようになりました。  https://twitter.com/frankdegods/status/2020363804014493920   pic.twitter.com/e6Aiz38090
+> My favorite thing in the world to play with now. You can accurately research anything on X now.  https://twitter.com/frankdegods/status/2020363804014493920   pic.twitter.com/e6Aiz38090 
+今、世界で遊ぶのが一番好きなもの。Xで何でも正確にリサーチできるようになりました。  https://twitter.com/frankdegods/status/2020363804014493920   pic.twitter.com/e6Aiz38090
 
-— Frank (@frankdegods)  February 8, 2026
-> — Frank (@frankdegods)  2026年2月8日
+> — Frank (@frankdegods)  February 8, 2026
+— Frank (@frankdegods)  2026年2月8日
+

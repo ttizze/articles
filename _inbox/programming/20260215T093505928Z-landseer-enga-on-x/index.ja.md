@@ -8,11 +8,12 @@ content_type: "application/x-oembed+json"
 extractor: "x-oembed"
 ---
 
-# Landseer Enga on X
-> Landseer Enga on X
+> # Landseer Enga on X
+Landseer Enga on X
 
-added!  https://skills.sh/revylai/greenlight/greenlight
-> 追加しました！ https://skills.sh/revylai/greenlight/greenlight
+> added!  https://skills.sh/revylai/greenlight/greenlight
+追加しました！ https://skills.sh/revylai/greenlight/greenlight
 
-— Landseer Enga (@LandseerEnga)  February 11, 2026
-> — Landseer Enga (@LandseerEnga) 2026年2月11日
+> — Landseer Enga (@LandseerEnga)  February 11, 2026
+— Landseer Enga (@LandseerEnga) 2026年2月11日
+

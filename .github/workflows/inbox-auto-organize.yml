@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       targets:
-        description: "Newline-separated inbox targets to process (inbox/<name>.md or inbox/<dir>/index.md). Leave empty to process all top-level inbox entries."
+        description: "Newline-separated inbox targets to process (_inbox/<name>.md or _inbox/<dir>/index.md). Leave empty to process all top-level inbox entries."
         required: false
         type: string
 
@@ -44,8 +44,8 @@ jobs:
           else
             # workflow_dispatch (no explicit targets): process all top-level inbox entries.
             FILES="$(
-              (ls -1 inbox/*.md 2>/dev/null || true)
-              (find inbox -maxdepth 2 -type f -path 'inbox/*/index.md' 2>/dev/null || true)
+              (ls -1 _inbox/*.md 2>/dev/null || true)
+              (find _inbox -maxdepth 2 -type f -path '_inbox/*/index.md' 2>/dev/null || true)
             )"
           fi
 
@@ -53,8 +53,8 @@ jobs:
             printf '%s\n' "${FILES}" \
               | sed '/^$/d' \
               | awk '
-                  $0 ~ /^inbox\/[^\/]+\.md$/ { print; next }
-                  $0 ~ /^inbox\/[^\/]+\/index\.md$/ { print; next }
+                  $0 ~ /^_inbox\/[^\/]+\.md$/ { print; next }
+                  $0 ~ /^_inbox\/[^\/]+\/index\.md$/ { print; next }
                 ' \
               | sort -u
           )"
@@ -95,14 +95,14 @@ jobs:
             Do NOT run git commands (git add/commit/push). A later workflow step will commit/push.
 
             Goal:
-            - When new articles are saved under inbox/, automatically classify and move them into inbox/<category>/...
+            - When new articles are saved under _inbox/, automatically classify and move them into _inbox/<category>/...
             - If the content is NOT primarily Japanese, create a full Japanese translation as index.ja.md.
 
             Target inputs (process ONLY these paths, and ignore any other inbox entries):
             ${{ steps.targets.outputs.targets }}
             Notes:
-            - The only valid target shapes are: inbox/<name>.md and inbox/<dir>/index.md
-            - Do not touch anything already under inbox/<category>/...
+            - The only valid target shapes are: _inbox/<name>.md and _inbox/<dir>/index.md
+            - Do not touch anything already under _inbox/<category>/...
 
             Categories (directory names):
             - programming
@@ -116,46 +116,46 @@ jobs:
             Rules:
             1) For each target entry, choose exactly one category based on the content.
             2) Move/normalize structure:
-               - If the entry is a file inbox/<name>.md:
-                 - Create directory inbox/<category>/<name>/
-                 - Move the file to inbox/<category>/<name>/index.md
-               - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
-                 - Move the whole directory to inbox/<category>/<dir>/
-                 - Example: inbox/foo/index.md -> inbox/programming/foo/index.md (directory name must be preserved)
-               - Do NOT create or modify any category index file like inbox/<category>/index.md.
-            3) Translation:
-               - For each processed entry directory containing index.md:
-                 - If index.ja.md already exists, do nothing.
-                 - If index.md is primarily Japanese, do nothing.
-                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
-               - index.ja.md must:
-                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
-                  - Keep ALL original Markdown blocks from index.md verbatim, and add the Japanese translation immediately under each original block (対訳形式).
-                  - Use a blockquote for each translation block so it is visually distinct.
-                  - Example:
-                    - Original:
-                      - ## Heading
-                      - A paragraph.
-                      - - Item A
-                      - - Item B
-                    - index.ja.md:
-                      - ## Heading
-                      - > 見出し（訳）
-                      - A paragraph.
-                      - > 段落の日本語訳。
-                      - - Item A
-                      - - Item B
-                      - > - 項目A
-                      - > - 項目B
-                  - Do NOT translate code blocks or raw URLs; keep them as-is and omit translation blocks for them.
-                  - Preserve links/URLs/code blocks as much as possible.
+               - If the entry is a file _inbox/<name>.md:
+                 - Create directory _inbox/<category>/<name>/
+                 - Move the file to _inbox/<category>/<name>/index.md
+               - If the entry is a directory _inbox/<dir>/ with _inbox/<dir>/index.md:
+                 - Move the whole directory to _inbox/<category>/<dir>/
+                 - Example: _inbox/foo/index.md -> _inbox/programming/foo/index.md (directory name must be preserved)
+               - Do NOT create or modify any category index file like _inbox/<category>/index.md.
+	            3) Translation:
+	               - For each processed entry directory containing index.md:
+	                 - If index.ja.md already exists, do nothing.
+	                 - If index.md is primarily Japanese, do nothing.
+	                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
+	               - index.ja.md must:
+	                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+	                  - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
+	                  - Use a blockquote for each ORIGINAL block so it is visually distinct.
+	                  - Example:
+	                    - Original:
+	                      - ## Heading
+	                      - A paragraph.
+	                      - - Item A
+	                      - - Item B
+	                    - index.ja.md:
+	                      - > ## Heading
+	                      - 見出し（訳）
+	                      - > A paragraph.
+	                      - 段落の日本語訳。
+	                      - > - Item A
+	                      - > - Item B
+	                      - - 項目A
+	                      - - 項目B
+	                  - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
+	                  - Preserve links/URLs/code blocks as much as possible.
             4) Be conservative:
                - Do not summarize. Do not rewrite for style. Translate only.
                - Only move files/directories and create missing index.ja.md files.
                - If there are no targets, do nothing.
 
             After completion:
-            - Each target path must no longer exist at its original location, and the normalized destination must exist under inbox/<category>/... as specified above.
+            - Each target path must no longer exist at its original location, and the normalized destination must exist under _inbox/<category>/... as specified above.
 
       - name: Organize Inbox + Translate (Claude Code via API Key)
         if: ${{ steps.targets.outputs.count != '0' && env.CLAUDE_CODE_OAUTH_TOKEN == '' && env.ANTHROPIC_API_KEY != '' }}
@@ -171,14 +171,14 @@ jobs:
             Do NOT run git commands (git add/commit/push). A later workflow step will commit/push.
 
             Goal:
-            - When new articles are saved under inbox/, automatically classify and move them into inbox/<category>/...
+            - When new articles are saved under _inbox/, automatically classify and move them into _inbox/<category>/...
             - If the content is NOT primarily Japanese, create a full Japanese translation as index.ja.md.
 
             Target inputs (process ONLY these paths, and ignore any other inbox entries):
             ${{ steps.targets.outputs.targets }}
             Notes:
-            - The only valid target shapes are: inbox/<name>.md and inbox/<dir>/index.md
-            - Do not touch anything already under inbox/<category>/...
+            - The only valid target shapes are: _inbox/<name>.md and _inbox/<dir>/index.md
+            - Do not touch anything already under _inbox/<category>/...
 
             Categories (directory names):
             - programming
@@ -192,46 +192,46 @@ jobs:
             Rules:
             1) For each target entry, choose exactly one category based on the content.
             2) Move/normalize structure:
-               - If the entry is a file inbox/<name>.md:
-                 - Create directory inbox/<category>/<name>/
-                 - Move the file to inbox/<category>/<name>/index.md
-               - If the entry is a directory inbox/<dir>/ with inbox/<dir>/index.md:
-                 - Move the whole directory to inbox/<category>/<dir>/
-                 - Example: inbox/foo/index.md -> inbox/programming/foo/index.md (directory name must be preserved)
-               - Do NOT create or modify any category index file like inbox/<category>/index.md.
-            3) Translation:
-               - For each processed entry directory containing index.md:
-                 - If index.ja.md already exists, do nothing.
-                 - If index.md is primarily Japanese, do nothing.
-                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
-               - index.ja.md must:
-                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
-                  - Keep ALL original Markdown blocks from index.md verbatim, and add the Japanese translation immediately under each original block (対訳形式).
-                  - Use a blockquote for each translation block so it is visually distinct.
-                  - Example:
-                    - Original:
-                      - ## Heading
-                      - A paragraph.
-                      - - Item A
-                      - - Item B
-                    - index.ja.md:
-                      - ## Heading
-                      - > 見出し（訳）
-                      - A paragraph.
-                      - > 段落の日本語訳。
-                      - - Item A
-                      - - Item B
-                      - > - 項目A
-                      - > - 項目B
-                  - Do NOT translate code blocks or raw URLs; keep them as-is and omit translation blocks for them.
-                  - Preserve links/URLs/code blocks as much as possible.
+               - If the entry is a file _inbox/<name>.md:
+                 - Create directory _inbox/<category>/<name>/
+                 - Move the file to _inbox/<category>/<name>/index.md
+               - If the entry is a directory _inbox/<dir>/ with _inbox/<dir>/index.md:
+                 - Move the whole directory to _inbox/<category>/<dir>/
+                 - Example: _inbox/foo/index.md -> _inbox/programming/foo/index.md (directory name must be preserved)
+               - Do NOT create or modify any category index file like _inbox/<category>/index.md.
+	            3) Translation:
+	               - For each processed entry directory containing index.md:
+	                 - If index.ja.md already exists, do nothing.
+	                 - If index.md is primarily Japanese, do nothing.
+	                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
+	               - index.ja.md must:
+	                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+	                  - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
+	                  - Use a blockquote for each ORIGINAL block so it is visually distinct.
+	                  - Example:
+	                    - Original:
+	                      - ## Heading
+	                      - A paragraph.
+	                      - - Item A
+	                      - - Item B
+	                    - index.ja.md:
+	                      - > ## Heading
+	                      - 見出し（訳）
+	                      - > A paragraph.
+	                      - 段落の日本語訳。
+	                      - > - Item A
+	                      - > - Item B
+	                      - - 項目A
+	                      - - 項目B
+	                  - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
+	                  - Preserve links/URLs/code blocks as much as possible.
             4) Be conservative:
                - Do not summarize. Do not rewrite for style. Translate only.
                - Only move files/directories and create missing index.ja.md files.
                - If there are no targets, do nothing.
 
             After completion:
-            - Each target path must no longer exist at its original location, and the normalized destination must exist under inbox/<category>/... as specified above.
+            - Each target path must no longer exist at its original location, and the normalized destination must exist under _inbox/<category>/... as specified above.
 
       - name: Validate Organized Structure
         if: ${{ steps.targets.outputs.count != '0' }}
@@ -244,8 +244,8 @@ jobs:
           CATS=(programming design marketing business buddhism reading other)
 
           for c in "${CATS[@]}"; do
-            if [ -f "inbox/${c}/index.md" ] || [ -f "inbox/${c}/index.ja.md" ]; then
-              echo "Invalid output: category index file must not exist: inbox/${c}/index.md or inbox/${c}/index.ja.md"
+            if [ -f "_inbox/${c}/index.md" ] || [ -f "_inbox/${c}/index.ja.md" ]; then
+              echo "Invalid output: category index file must not exist: _inbox/${c}/index.md or _inbox/${c}/index.ja.md"
               exit 1
             fi
           done
@@ -257,7 +257,7 @@ jobs:
             t="$(printf '%s' "$t" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
             [ -z "$t" ] && continue
 
-            if [[ "$t" =~ ^inbox/[^/]+\.md$ ]]; then
+            if [[ "$t" =~ ^_inbox/[^/]+\.md$ ]]; then
               base="$(basename "$t" .md)"
 
               if [ -e "$t" ]; then
@@ -267,7 +267,7 @@ jobs:
 
               found=""
               for c in "${CATS[@]}"; do
-                candidate="inbox/${c}/${base}/index.md"
+                candidate="_inbox/${c}/${base}/index.md"
                 if [ -f "$candidate" ]; then
                   if [ -n "$found" ]; then
                     echo "Invalid output: multiple destinations for $t:"
@@ -280,22 +280,22 @@ jobs:
               done
 
               if [ -z "$found" ]; then
-                echo "Invalid output: destination not found for $t (expected inbox/<category>/${base}/index.md)"
+                echo "Invalid output: destination not found for $t (expected _inbox/<category>/${base}/index.md)"
                 exit 1
               fi
 
-            elif [[ "$t" =~ ^inbox/[^/]+/index\.md$ ]]; then
+            elif [[ "$t" =~ ^_inbox/[^/]+/index\.md$ ]]; then
               d="$(dirname "$t")"
-              d="${d#inbox/}"
+              d="${d#_inbox/}"
 
-              if [ -d "inbox/${d}" ]; then
-                echo "Invalid output: original directory still exists: inbox/${d}"
+              if [ -d "_inbox/${d}" ]; then
+                echo "Invalid output: original directory still exists: _inbox/${d}"
                 exit 1
               fi
 
               found=""
               for c in "${CATS[@]}"; do
-                candidate="inbox/${c}/${d}/index.md"
+                candidate="_inbox/${c}/${d}/index.md"
                 if [ -f "$candidate" ]; then
                   if [ -n "$found" ]; then
                     echo "Invalid output: multiple destinations for $t:"
@@ -308,7 +308,7 @@ jobs:
               done
 
               if [ -z "$found" ]; then
-                echo "Invalid output: destination not found for $t (expected inbox/<category>/${d}/index.md)"
+                echo "Invalid output: destination not found for $t (expected _inbox/<category>/${d}/index.md)"
                 exit 1
               fi
 
@@ -351,7 +351,7 @@ jobs:
             exit 0
           fi
 
-          BRANCH="inbox/auto-organize-${GITHUB_RUN_ID}"
+          BRANCH="_inbox/auto-organize-${GITHUB_RUN_ID}"
           echo "Push to main failed (likely repository rules). Pushing branch: ${BRANCH}"
 
           git checkout -B "$BRANCH"

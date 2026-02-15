@@ -8,8 +8,9 @@ content_type: "application/x-oembed+json"
 extractor: "x-oembed"
 ---
 
-# Eli Mernit on X
-> Eli Mernit on X
+> # Eli Mernit on X
+Eli Mernit on X
 
-https://t.co/RyKb3xS5Xc  &mdash; Eli Mernit (@mernit)  February 10, 2026
-> https://t.co/RyKb3xS5Xc  &mdash; Eli Mernit (@mernit)  2026年2月10日
+> https://t.co/RyKb3xS5Xc  &mdash; Eli Mernit (@mernit)  February 10, 2026
+https://t.co/RyKb3xS5Xc  &mdash; Eli Mernit (@mernit)  2026年2月10日
+

@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - "inbox/*.md"
-      - "inbox/*/index.md"
+      - "_inbox/*.md"
+      - "_inbox/*/index.md"
 
 concurrency:
   group: inbox-auto-organize-dispatch-${{ github.ref }}
@@ -35,15 +35,15 @@ jobs:
           AFTER="${{ github.sha }}"
 
           # Only dispatch for added/modified files. Merges from the organizer PR will delete
-          # inbox/*.md, and we want to ignore deletions to avoid re-dispatching.
+          # _inbox/*.md, and we want to ignore deletions to avoid re-dispatching.
           FILES="$(git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER" || true)"
 
           TARGETS="$(
             printf '%s\n' "${FILES}" \
               | sed '/^$/d' \
               | awk '
-                  $0 ~ /^inbox\/[^\/]+\.md$/ { print; next }
-                  $0 ~ /^inbox\/[^\/]+\/index\.md$/ { print; next }
+                  $0 ~ /^_inbox\/[^\/]+\.md$/ { print; next }
+                  $0 ~ /^_inbox\/[^\/]+\/index\.md$/ { print; next }
                 ' \
               | sort -u
           )"
