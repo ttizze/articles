@@ -123,32 +123,32 @@ jobs:
                  - Move the whole directory to _inbox/<category>/<dir>/
                  - Example: _inbox/foo/index.md -> _inbox/programming/foo/index.md (directory name must be preserved)
                - Do NOT create or modify any category index file like _inbox/<category>/index.md.
-	            3) Translation:
-	               - For each processed entry directory containing index.md:
-	                 - If index.ja.md already exists, do nothing.
-	                 - If index.md is primarily Japanese, do nothing.
-	                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
-	               - index.ja.md must:
-	                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
-	                  - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
-	                  - Use a blockquote for each ORIGINAL block so it is visually distinct.
-	                  - Example:
-	                    - Original:
-	                      - ## Heading
-	                      - A paragraph.
-	                      - - Item A
-	                      - - Item B
-	                    - index.ja.md:
-	                      - > ## Heading
-	                      - 見出し（訳）
-	                      - > A paragraph.
-	                      - 段落の日本語訳。
-	                      - > - Item A
-	                      - > - Item B
-	                      - - 項目A
-	                      - - 項目B
-	                  - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
-	                  - Preserve links/URLs/code blocks as much as possible.
+              3) Translation:
+                 - For each processed entry directory containing index.md:
+                   - If index.ja.md already exists, do nothing.
+                   - If index.md is primarily Japanese, do nothing.
+                   - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
+                 - index.ja.md must:
+                    - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+                    - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
+                    - Use a blockquote for each ORIGINAL block so it is visually distinct.
+                    - Example:
+                      - Original:
+                        - ## Heading
+                        - A paragraph.
+                        - - Item A
+                        - - Item B
+                      - index.ja.md:
+                        - > ## Heading
+                        - 見出し（訳）
+                        - > A paragraph.
+                        - 段落の日本語訳。
+                        - > - Item A
+                        - > - Item B
+                        - - 項目A
+                        - - 項目B
+                    - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
+                    - Preserve links/URLs/code blocks as much as possible.
             4) Be conservative:
                - Do not summarize. Do not rewrite for style. Translate only.
                - Only move files/directories and create missing index.ja.md files.
@@ -199,32 +199,32 @@ jobs:
                  - Move the whole directory to _inbox/<category>/<dir>/
                  - Example: _inbox/foo/index.md -> _inbox/programming/foo/index.md (directory name must be preserved)
                - Do NOT create or modify any category index file like _inbox/<category>/index.md.
-	            3) Translation:
-	               - For each processed entry directory containing index.md:
-	                 - If index.ja.md already exists, do nothing.
-	                 - If index.md is primarily Japanese, do nothing.
-	                 - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
-	               - index.ja.md must:
-	                  - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
-	                  - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
-	                  - Use a blockquote for each ORIGINAL block so it is visually distinct.
-	                  - Example:
-	                    - Original:
-	                      - ## Heading
-	                      - A paragraph.
-	                      - - Item A
-	                      - - Item B
-	                    - index.ja.md:
-	                      - > ## Heading
-	                      - 見出し（訳）
-	                      - > A paragraph.
-	                      - 段落の日本語訳。
-	                      - > - Item A
-	                      - > - Item B
-	                      - - 項目A
-	                      - - 項目B
-	                  - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
-	                  - Preserve links/URLs/code blocks as much as possible.
+              3) Translation:
+                 - For each processed entry directory containing index.md:
+                   - If index.ja.md already exists, do nothing.
+                   - If index.md is primarily Japanese, do nothing.
+                   - Otherwise, create index.ja.md as a bilingual (original + Japanese) translation file.
+                 - index.ja.md must:
+                    - Start with the EXACT same YAML frontmatter as index.md (copy as-is).
+                    - Keep ALL original Markdown blocks from index.md (content must remain identical), render each original block as a blockquote by prefixing each line with `> `, and add the Japanese translation immediately under it as normal (non-blockquote) text (対訳形式).
+                    - Use a blockquote for each ORIGINAL block so it is visually distinct.
+                    - Example:
+                      - Original:
+                        - ## Heading
+                        - A paragraph.
+                        - - Item A
+                        - - Item B
+                      - index.ja.md:
+                        - > ## Heading
+                        - 見出し（訳）
+                        - > A paragraph.
+                        - 段落の日本語訳。
+                        - > - Item A
+                        - > - Item B
+                        - - 項目A
+                        - - 項目B
+                    - Do NOT translate code blocks or raw URLs; include them only as original (blockquoted) and omit Japanese translation blocks for them.
+                    - Preserve links/URLs/code blocks as much as possible.
             4) Be conservative:
                - Do not summarize. Do not rewrite for style. Translate only.
                - Only move files/directories and create missing index.ja.md files.
